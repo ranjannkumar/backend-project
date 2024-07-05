@@ -4,6 +4,7 @@ import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens=async(userId)=>{
   try{
@@ -170,8 +171,8 @@ const logoutUser=asyncHandler(async(req,res)=>{
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set:{
-        refreshToken:undefined
+      $unset:{
+        refreshToken:1 //this reomoves the field fro, document
       }
     },
     {
@@ -254,7 +255,7 @@ const changeCurrentPassword =asyncHandler(async(req,res)=>{
 
 })
 
-const getCurrentUser=asyncHandler(async(res,req)=>{
+const getCurrentUser=asyncHandler(async(req,res)=>{
   return res
   .status(200)
   .json( new ApiResponse(200,req.user,"current user fetched successfully"))
